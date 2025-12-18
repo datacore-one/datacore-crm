@@ -57,6 +57,7 @@ settings:
 hooks:
   today: "commands/today-hook.md"
   weekly_review: "commands/weekly-hook.md"
+  nightshift_queue: "commands/nightshift-hook.md"
   post_install: |
     echo "CRM module installed."
     echo ""
