@@ -1,0 +1,11 @@
+# Local overrides
+*.local.md
+*.local.yaml
+
+# State files (managed by runtime)
+state/
+
+# Editor files
+.DS_Store
+*.swp
+*~

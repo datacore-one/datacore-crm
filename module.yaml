@@ -1,0 +1,86 @@
+name: crm
+version: 0.1.0
+description: |
+  Contact Relationship Management for Datacore.
+  Track relationships across spaces, extract interactions from multiple channels,
+  surface insights in daily/weekly workflows, support privacy staging.
+
+author: datacore
+repository: https://github.com/datacore-one/module-crm
+license: MIT
+
+dependencies:
+  - core@>=1.0.0
+
+optional:
+  - gtd          # Enhanced task integration
+  - nightshift   # Automated daily scans
+  - mail         # Email interaction capture
+  - meeting-notes # Meeting interaction capture
+
+provides:
+  commands:
+    - crm        # Single conversational command for all CRM operations
+
+  agents:
+    - crm-interaction-extractor  # Extract interactions from journals/calendar
+    - crm-relationship-scorer    # Calculate relationship health scores
+
+  templates:
+    - contacts/                  # Contacts folder structure
+
+  crm_adapters:
+    - journal    # Built-in: extract [[Contact]] wiki-links from journals
+    - calendar   # Built-in: extract attendees from calendar.org
+
+settings:
+  scan_days_default:
+    description: "Default journal scan range in days"
+    default: 7
+
+  dormant_threshold_days:
+    description: "Days without interaction before marked dormant"
+    default: 60
+
+  auto_scan_enabled:
+    description: "Enable automatic journal/calendar scans on /today"
+    default: true
+
+  relationship_score_weights:
+    description: "Weights for relationship score calculation"
+    default:
+      recency: 0.4
+      frequency: 0.3
+      depth: 0.2
+      reciprocity: 0.1
+
+hooks:
+  today: "commands/today-hook.md"
+  weekly_review: "commands/weekly-hook.md"
+  post_install: |
+    echo "CRM module installed."
+    echo ""
+    echo "Quick start:"
+    echo "  1. Run /crm to get started"
+    echo "  2. Create contacts in [space]/contacts/"
+    echo "  3. Mention contacts as [[Name]] in journals"
+    echo ""
+    echo "Contacts folder structure:"
+    echo "  [space]/contacts/"
+    echo "    ├── _index.md"
+    echo "    ├── people/"
+    echo "    └── companies/"
+
+use_cases:
+  - Track professional relationships across personal and team spaces
+  - Auto-extract interactions from daily journals and calendar
+  - Prepare for trips/conferences with relevant contact briefings
+  - Surface follow-up opportunities in /today briefing
+  - Review relationship health in weekly reviews
+  - Stage contacts from personal to team space when formalized
+
+related_dips:
+  - DIP-0002  # Layered context for cross-space index
+  - DIP-0009  # GTD integration (:CRM: tag)
+  - DIP-0010  # External sync adapter pattern
+  - DIP-0012  # CRM Module specification
