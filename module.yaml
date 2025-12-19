@@ -7,7 +7,7 @@ description: |
   Support relationship lifecycle from discovery to partnership.
 
 author: datacore
-repository: https://github.com/datacore-one/module-crm
+repository: https://github.com/datacore-one/datacore-crm
 license: MIT
 
 dependencies:
