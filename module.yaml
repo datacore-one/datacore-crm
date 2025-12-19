@@ -1,9 +1,10 @@
 name: crm
-version: 0.1.0
+version: 0.2.0
 description: |
-  Contact Relationship Management for Datacore.
-  Track relationships across spaces, extract interactions from multiple channels,
-  surface insights in daily/weekly workflows, support privacy staging.
+  Network Intelligence for Datacore.
+  Track entities (people, companies, projects, events), relationships, and industry landscape.
+  Capture from research, journals, calendar. Surface strategic insights in workflows.
+  Support relationship lifecycle from discovery to partnership.
 
 author: datacore
 repository: https://github.com/datacore-one/module-crm
@@ -14,7 +15,7 @@ dependencies:
 
 optional:
   - gtd          # Enhanced task integration
-  - nightshift   # Automated daily scans
+  - nightshift   # Automated daily scans and maintenance
   - mail         # Email interaction capture
   - meeting-notes # Meeting interaction capture
 
@@ -25,9 +26,12 @@ provides:
   agents:
     - crm-interaction-extractor  # Extract interactions from journals/calendar
     - crm-relationship-scorer    # Calculate relationship health scores
+    - crm-entity-extractor       # Extract entities from research/literature
+    - crm-contact-maintainer     # Dedup, merge, validate contacts
 
   templates:
     - contacts/                  # Contacts folder structure
+    - landscape/                 # Industry landscape templates
 
   crm_adapters:
     - journal    # Built-in: extract [[Contact]] wiki-links from journals
@@ -54,10 +58,23 @@ settings:
       depth: 0.2
       reciprocity: 0.1
 
+  entity_extraction:
+    description: "Entity extraction settings"
+    default:
+      auto_create_drafts: false
+      min_confidence: 0.7
+
+  maintenance:
+    description: "Contact maintenance settings"
+    default:
+      weekly_maintenance: true
+      stale_threshold_days: 180
+
 hooks:
   today: "commands/today-hook.md"
   weekly_review: "commands/weekly-hook.md"
   nightshift_queue: "commands/nightshift-hook.md"
+  research_complete: "commands/research-hook.md"
   post_install: |
     echo "CRM module installed."
     echo ""
@@ -70,15 +87,22 @@ hooks:
     echo "  [space]/contacts/"
     echo "    ├── _index.md"
     echo "    ├── people/"
-    echo "    └── companies/"
+    echo "    ├── companies/"
+    echo "    ├── projects/"
+    echo "    ├── events/"
+    echo "    └── landscape/"
 
 use_cases:
   - Track professional relationships across personal and team spaces
   - Auto-extract interactions from daily journals and calendar
+  - Extract entities from research articles and literature notes
+  - Build industry landscape for strategic analysis
+  - Track relationship evolution from discovery to partnership
   - Prepare for trips/conferences with relevant contact briefings
   - Surface follow-up opportunities in /today briefing
   - Review relationship health in weekly reviews
   - Stage contacts from personal to team space when formalized
+  - Identify competitors and market positioning
 
 related_dips:
   - DIP-0002  # Layered context for cross-space index

@@ -1,12 +1,16 @@
 ---
 type: contact
-contact_type: person
+entity_type: person
 name: "{{NAME}}"
-status: draft
-privacy: personal
+status: draft                     # draft | active | dormant | archived
+relationship_status: discovered   # discovered | lead | contacted | in_discussion | active | partner | dormant | archived
+relationship_type: ""             # partner | investor | customer | vendor | advisor | peer | competitor | target_*
+relevance: 2                      # 1-5 (minimal to critical)
+privacy: personal                 # personal | team
 space: {{SPACE}}
 organization: ""
 role: ""
+industries: []
 channels:
   email: ""
   telegram: ""
@@ -16,6 +20,7 @@ location: ""
 tags: []
 introduced_by: ""
 met_at: ""
+discovered_in: ""                 # Source: "[[Literature Note]]" | "research" | "journal"
 created: {{DATE}}
 updated: {{DATE}}
 last_interaction: {{DATE}}

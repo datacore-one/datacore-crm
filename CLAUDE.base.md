@@ -1,37 +1,79 @@
 # Module: CRM
 
-Contact Relationship Management for Datacore. Track relationships across spaces, extract interactions from multiple channels, and surface insights in daily workflows.
+Network Intelligence for Datacore. Track entities (people, companies, projects, events), relationships, and industry landscape. Capture from research, journals, and external channels. Surface strategic insights in workflows.
 
 ## Overview
 
-The CRM module serves as a central hub for relationship management:
+The CRM module serves as a central hub for network intelligence:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  CAPTURE LAYER (Adapters)                    │
+│                  CAPTURE LAYER                               │
 │  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌───────────┐ │
-│  │Journal │ │Calendar│ │Meeting │ │  Mail  │ │ Telegram/ │ │
-│  │ (CRM)  │ │ (CRM)  │ │ Notes  │ │(module)│ │ LinkedIn  │ │
+│  │Journal │ │Calendar│ │Research│ │  Mail  │ │ External  │ │
+│  │ (CRM)  │ │ (CRM)  │ │Extract │ │(module)│ │ Adapters  │ │
 │  └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └─────┬─────┘ │
 │      └──────────┴──────────┴──────────┴────────────┘       │
 │                           │                                 │
 │                           ▼                                 │
 │            ┌──────────────────────────┐                    │
 │            │     CRM MODULE (HUB)     │                    │
-│            │  - Contact notes         │                    │
-│            │  - Interaction log       │                    │
-│            │  - Relationship scoring  │                    │
+│            │  - 4 Entity Types        │                    │
+│            │  - Relationship Lifecycle│                    │
+│            │  - Industry Landscape    │                    │
 │            └────────────┬─────────────┘                    │
 └─────────────────────────┼──────────────────────────────────┘
                           ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                     SURFACE LAYER                            │
-│  /today          /gtd-weekly-review      Contact notes      │
-│  - Follow-ups    - Relationship health   - Interaction log  │
-│  - Dormant       - Follow-up queue       - Next actions     │
-│  - Pre-meeting   - Contacts engaged                         │
+│  /today          /gtd-weekly-review      Landscape          │
+│  - Follow-ups    - Relationship health   - Industry view    │
+│  - Dormant       - Follow-up queue       - Competitors      │
+│  - Pre-meeting   - Contacts engaged      - Ecosystem        │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+## Entity Types
+
+| Type | Description | Examples |
+|------|-------------|----------|
+| `person` | Individual contact | John Smith, Juan Benet |
+| `company` | Organization | Acme Corp, Protocol Labs |
+| `project` | Product, protocol, initiative | Filecoin, IPFS |
+| `event` | Conference, meetup | ETH Denver 2025 |
+
+## Relationship Taxonomy
+
+### Status (Lifecycle)
+
+```
+discovered → lead → contacted → in_discussion → negotiating → active/partner/customer
+                                                               ↓
+                                                        dormant → churned → archived
+```
+
+### Types
+
+| Category | Types |
+|----------|-------|
+| Collaborative | partner, investor, customer, vendor, advisor, collaborator |
+| Neutral | peer, acquaintance, press |
+| Competitive | competitor, indirect_competitor |
+| Potential | target_customer, target_partner, target_investor |
+
+### Relevance (1-5)
+
+| Score | Level | Description |
+|-------|-------|-------------|
+| 5 | Critical | Must-have relationship |
+| 4 | High | Important for strategy |
+| 3 | Medium | Useful connection |
+| 2 | Low | Nice to have |
+| 1 | Minimal | Peripheral |
+
+### Industries (Dynamic)
+
+Industries are **discovered, not hardcoded**. First use creates a canonical entry in the registry at `.datacore/state/crm/industries.yaml`. Similar tags are detected and suggested for merge.
 
 ## Commands
 
@@ -39,18 +81,13 @@ The CRM module serves as a central hub for relationship management:
 
 Single conversational entry point for all CRM operations.
 
-**When to use:**
-- View network status and relationship health
-- Prepare for trips/conferences
-- Scan journals for new interactions
-- Create or update contacts
-- Promote contacts between spaces
-
 **Menu options:**
 1. View network status
 2. Prepare for trip/event
 3. Scan for new interactions
 4. Create or update contact
+5. Run maintenance (dedupe, validate)
+6. Generate landscape
 
 ## Agents
 
@@ -60,132 +97,104 @@ Extracts `[[Contact Name]]` mentions from journals and calendar attendees.
 
 **Trigger:** Called by `/crm` scan or nightshift
 
-**Input:** Date range to scan
-
-**Output:** List of interactions with contact, channel, timestamp, summary
-
 ### crm-relationship-scorer
 
-Calculates relationship health score (0-1) based on:
-- Recency (40%): Exponential decay from last interaction
-- Frequency (30%): Interactions per month
-- Depth (20%): Meeting > email > mention
-- Reciprocity (10%): Two-way vs one-way
+Calculates relationship health score (0-1) based on recency, frequency, depth, reciprocity.
 
-**Score thresholds:**
-- `> 0.7` Active
-- `0.4 - 0.7` Warming/Cooling
-- `< 0.4` Dormant
+### crm-entity-extractor
+
+**NEW:** Extracts entities from research outputs and literature notes.
+
+**Trigger:** After research processor, or manual `/crm extract [file]`
+
+**Process:**
+- Detect person/company/project/event patterns
+- Extract context and suggest industries
+- Check against existing contacts
+- Create draft contacts (with flag)
+
+### crm-contact-maintainer
+
+**NEW:** Maintains contact database quality.
+
+**Trigger:** Weekly via nightshift, or manual `/crm maintenance`
+
+**Process:**
+- Duplicate detection (Levenshtein similarity)
+- Validation (broken links, incomplete, stale)
+- Merge preview generation
+- Industry registry maintenance
 
 ## Folder Structure
-
-### Hybrid Approach
-
-| Folder | Purpose | Updates |
-|--------|---------|---------|
-| `contacts/` | Active CRM - relationships with interaction tracking | Frequent, auto-populated |
-| `reference/` | Static knowledge - people/companies as reference | Manual, occasional |
-
-### Per-Space Structure
 
 ```
 [space]/contacts/
 ├── _index.md              # Contacts index
 ├── people/
 │   └── [Person Name].md
-└── companies/
-    └── [Company Name].md
+├── companies/
+│   └── [Company Name].md
+├── projects/              # NEW
+│   └── [Project Name].md
+├── events/                # NEW
+│   └── [Event Name].md
+└── landscape/             # NEW
+    ├── _overview.md       # Industry landscape
+    ├── competitors.md
+    └── ecosystem.md
 ```
 
 ## Contact Note Schema
 
-### Person
+### Common Fields
 
 ```yaml
 ---
 type: contact
-contact_type: person
-name: "[Full Name]"
-status: active           # draft | active | dormant | archived
-privacy: team            # personal | team
-space: 1-teamspace
-organization: "[[Company]]"
-role: "Title"
-channels:
-  email: person@example.com
-  telegram: "@username"
-  linkedin: "/in/username"
-tags: [investor, partner]
+entity_type: person | company | project | event
+name: "[Name]"
+status: draft | active | dormant | archived
+relationship_status: discovered | lead | contacted | active | partner | dormant
+relationship_type: partner | investor | customer | competitor | target_*
+relevance: 1-5
+industries: [storage, web3, defi]
+tags: []
+discovered_in: "[[Source]]"    # Research source
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-last_interaction: YYYY-MM-DD
 ---
 ```
 
-### Sections
+### Entity-Specific Fields
 
-- **Overview**: Role, organization, relevance
-- **Goals**: What I want, what they want
-- **Notes**: Freeform observations
-- **Interaction Log**: Auto-populated by adapters
-- **Next Actions**: Embedded from `:CRM:` tasks
-- **Related**: Wiki-links to company, contacts, projects
+| Entity | Additional Fields |
+|--------|-------------------|
+| Person | organization, role, channels, introduced_by, met_at |
+| Company | market_position, stage, website, linkedin |
+| Project | project_type, stage, parent_company, github, docs |
+| Event | event_type, date_start, date_end, location, website |
+
+## Industry Landscape
+
+The landscape provides strategic network intelligence:
+
+- **Industry overview**: Contacts by industry with counts
+- **Relationship distribution**: Partners, customers, competitors, targets
+- **Competitor tracking**: Direct competitors with positioning
+- **Coverage gaps**: Industries/areas lacking relationships
+
+Generate with `/crm landscape` or via landscape compiler.
 
 ## GTD Integration
-
-### Task Tagging
 
 CRM tasks use `:CRM:` tag in `next_actions.org`:
 
 ```org
 * TODO Follow up with [[John Smith]] on partnership   :CRM:
-  SCHEDULED: <2025-12-20 Fri>
   :PROPERTIES:
   :CONTACT: John Smith
   :END:
 ```
-
-### /today Integration
-
-CRM surfaces in daily briefing:
-- Today's meeting attendee context
-- Follow-ups due today
-- Dormant high-value relationships
-
-### Weekly Review Integration
-
-CRM section in weekly review:
-- Interactions this week
-- Relationship health distribution
-- Follow-up queue
-
-## Privacy Staging
-
-Contacts can be promoted from personal to team space:
-
-1. Contact starts in `0-personal/contacts/`
-2. Relationship develops
-3. User runs `/crm` → "Promote to team space"
-4. Contact copied to team space
-5. Personal notes stay private
-
-## Adapter Interface
-
-Other modules can implement `CRMAdapter` to feed interactions:
-
-```python
-class CRMAdapter(ABC):
-    @property
-    def adapter_type(self) -> str: ...
-
-    def extract_interactions(self, since: datetime) -> List[Interaction]: ...
-
-    def resolve_contact(self, identifier: str) -> Optional[str]: ...
-```
-
-**Built-in adapters:** journal, calendar
-
-**External adapters:** meeting-notes, mail, telegram, linkedin (separate modules)
 
 ## Settings
 
@@ -194,6 +203,10 @@ class CRMAdapter(ABC):
 | `scan_days_default` | 7 | Journal scan range |
 | `dormant_threshold_days` | 60 | Days until dormant |
 | `auto_scan_enabled` | true | Scan on /today |
+| `entity_extraction.auto_create_drafts` | false | Auto-create from research |
+| `entity_extraction.min_confidence` | 0.7 | Minimum confidence for extraction |
+| `maintenance.weekly_maintenance` | true | Run weekly via nightshift |
+| `maintenance.stale_threshold_days` | 180 | Days until stale warning |
 
 ## Related DIPs
 
