@@ -74,10 +74,11 @@ class IndustryRegistry:
         self.registry_path.write_text(yaml.dump(self.registry, default_flow_style=False))
 
     def normalize(self, tag: str) -> str:
-        """Normalize industry tag to canonical form."""
+        """Normalize industry tag to canonical kebab-case form (per DIP-0014)."""
         normalized = tag.lower().strip()
-        normalized = re.sub(r'[\s-]+', '_', normalized)
-        return normalized
+        normalized = re.sub(r'[\s_]+', '-', normalized)  # spaces/underscores → hyphens
+        normalized = re.sub(r'-+', '-', normalized)       # collapse multiple hyphens
+        return normalized.strip('-')
 
     def register(self, tag: str) -> Tuple[str, bool]:
         """

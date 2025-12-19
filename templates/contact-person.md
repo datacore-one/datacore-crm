@@ -10,14 +10,13 @@ privacy: personal                 # personal | team
 space: {{SPACE}}
 organization: ""
 role: ""
-industries: []
+industries: []                    # Kept for machine queries (kebab-case)
 channels:
   email: ""
   telegram: ""
   linkedin: ""
   phone: ""
 location: ""
-tags: []
 introduced_by: ""
 met_at: ""
 discovered_in: ""                 # Source: "[[Literature Note]]" | "research" | "journal"
@@ -62,3 +61,5 @@ last_interaction: {{DATE}}
 
 <!-- Wiki-links to company, other contacts, projects -->
 -
+
+#industry-tag, #relationship-type

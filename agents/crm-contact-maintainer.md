@@ -89,11 +89,16 @@ merge_previews:
     merge_from: "Jon Smith"
     merged_fields:
       channels.phone: "+1-555-0123"  # from Jon Smith
-      tags: [investor, partner, crypto]  # merged
+      industries: [privacy-tech, defi]  # merged arrays
+      inline_tags: "#privacy-tech, #defi, #investor, #partner"  # merged inline tags
     conflicts:
       role: ["VP Sales", "VP Partnerships"]  # user decides
     action_required: true
 ```
+
+**Tag handling per DIP-0014:**
+- `industries: []` frontmatter arrays are merged (machine queries)
+- Inline `#tags` at end of file are merged (human reading)
 
 ### 4. Industry Registry (registry)
 
@@ -101,7 +106,7 @@ Maintain the canonical industry registry:
 
 **Process:**
 1. Scan all contacts for `industries` field
-2. Normalize tags (lowercase, underscores)
+2. Normalize tags (lowercase, kebab-case per DIP-0014)
 3. Check for similar tags (Levenshtein < 3)
 4. Update counts
 5. Flag potential merges
@@ -110,12 +115,12 @@ Maintain the canonical industry registry:
 ```yaml
 industry_registry:
   new_industries:
-    - gold_trade_data
-    - supply_chain
+    - gold-trade-data
+    - supply-chain
 
   potential_merges:
-    - ["rwa", "real_world_assets"]
-    - ["ai", "ai_ml", "artificial_intelligence"]
+    - ["rwa", "real-world-assets"]
+    - ["ai", "ai-ml", "artificial-intelligence"]
 
   updated_counts:
     storage: 15
