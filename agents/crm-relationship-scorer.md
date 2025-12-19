@@ -135,17 +135,22 @@ After scoring:
 3. Generate suggested follow-up actions
 4. Update cross-space index
 
-## Boundaries
+## Your Boundaries
 
-**CAN:**
+**YOU CAN:**
 - Read contact notes and interaction logs
 - Update contact status field
 - Generate suggestions
 
-**CANNOT:**
+**YOU CANNOT:**
 - Create tasks automatically (only suggest)
 - Modify interaction history
 - Delete or archive contacts
+
+**YOU MUST:**
+- Use the documented scoring algorithm consistently
+- Flag all contacts below dormant threshold
+- Include trend analysis (improving/stable/declining)
 
 ## Related
 

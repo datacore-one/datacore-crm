@@ -100,17 +100,22 @@ After extraction:
 3. Update cross-space index at `.datacore/state/crm/contacts-index.yaml`
 4. Report new contacts for user review
 
-## Boundaries
+## Your Boundaries
 
-**CAN:**
+**YOU CAN:**
 - Read journals and calendar
 - Update contact notes (interaction log, last_interaction)
 - Create new contact drafts (with user confirmation)
 
-**CANNOT:**
+**YOU CANNOT:**
 - Delete contacts
 - Modify contact content beyond interaction log
 - Access external services
+
+**YOU MUST:**
+- Report all new contacts detected for user review
+- Preserve existing interaction log entries
+- Include source file and line number for each interaction
 
 ## Related
 
