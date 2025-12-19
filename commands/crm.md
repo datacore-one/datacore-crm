@@ -271,11 +271,47 @@ Proceed? (y/n)
 
 ## Error Handling
 
-| Error | Response |
-|-------|----------|
-| Contact not found | "No contact found matching '[name]'. Create new?" |
-| No contacts folder | "Contacts folder not found. Create [space]/contacts/? (y/n)" |
-| Duplicate contact | "Contact [[Name]] already exists. View existing?" |
+**Contact not found:**
+```
+No contact found matching '[name]'.
+
+Solution:
+  /crm new [name]   # Create new contact
+  /crm              # Browse existing contacts
+```
+
+**No contacts folder:**
+```
+Contacts folder not found in [space].
+
+Solution:
+  Create structure? (y/n)
+  This will create:
+    [space]/contacts/
+    ├── _index.md
+    ├── people/
+    ├── companies/
+    ├── projects/
+    ├── events/
+    └── landscape/
+```
+
+**Duplicate contact:**
+```
+Contact [[Name]] already exists at [path].
+
+Solution:
+  /crm [name]           # View existing contact
+  /crm maintenance      # Run dedup check
+```
+
+**Stale interaction data:**
+```
+Contact data may be outdated (last scan: [date]).
+
+Solution:
+  /crm scan             # Refresh from journals/calendar
+```
 
 ## Your Boundaries
 
