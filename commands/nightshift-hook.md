@@ -1,5 +1,44 @@
 # CRM Hook: Nightshift Integration
 
+## Command Context
+
+### When to Reference Nightshift Module
+
+**Always reference when:**
+- CRM data needs overnight updates
+- Daily interaction scanning should happen automatically
+- Contact index needs regular recompilation
+- Attention reports should be ready for morning briefing
+
+**Key decisions the module informs:**
+- Which CRM tasks to automate overnight
+- How fresh the contact data is each morning
+- What contacts need attention for daily planning
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| How often does this run? | Nightly at midnight (via nightshift queue) |
+| What gets updated? | Interaction logs, contact index, attention reports |
+| How long does it take? | ~6 minutes total for all tasks |
+| Can it be disabled? | Yes, via CRM module settings |
+
+### Agents This Command Invokes
+
+| Agent | Purpose |
+|-------|---------|
+| crm-interaction-extractor | Daily scan of last 24h interactions |
+| None (uses utilities) | Index compilation and attention report generation |
+
+### Integration Points
+
+- **Nightshift module** - Reads this hook to queue CRM tasks
+- **/tomorrow** - Can manually trigger CRM tasks for overnight
+- **/today** - Consumes nightshift output for morning briefing
+
+---
+
 Automated CRM maintenance tasks for nightshift execution.
 
 ## Trigger

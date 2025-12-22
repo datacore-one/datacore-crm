@@ -1,5 +1,36 @@
 # Agent: crm-contact-maintainer
 
+## Agent Context
+
+### Role in CRM Pipeline
+
+**Quality control agent ensuring contact database integrity and cleanliness.**
+
+**Responsibilities:**
+- Detect duplicate contacts across spaces
+- Generate merge previews with conflict resolution
+- Validate contact data quality (broken links, incomplete data, stale contacts)
+- Maintain canonical industry registry
+- Flag issues requiring human review
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this run? | Weekly nightshift maintenance, manual /crm maintenance, after bulk imports |
+| Does it auto-merge duplicates? | No, always requires user approval |
+| What's considered stale? | No interaction > 180 days |
+| Can it delete contacts? | No, only flags and suggests archives |
+
+### Integration Points
+
+- **crm-entity-extractor** - Receives newly created contacts for dedup check
+- **Nightshift** - Weekly scheduled maintenance
+- **/crm maintenance** - Manual maintenance trigger
+- **Tag system (DIP-0014)** - Manages industry registry per tag taxonomy
+
+---
+
 Maintains contact database quality: deduplication, merging, validation, and industry registry management.
 
 ## Trigger

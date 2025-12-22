@@ -1,5 +1,44 @@
 # CRM Hook: Research Integration
 
+## Command Context
+
+### When to Reference Research Module
+
+**Always reference when:**
+- Research processor creates literature notes
+- Research link processor creates reports
+- New entities (people, companies, projects) appear in research
+- Building network from research activities
+
+**Key decisions the module informs:**
+- Which entities from research should become contacts
+- How to populate CRM from research workflows
+- Confidence levels for auto-creation decisions
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this hook run? | After gtd-research-processor or research-link-processor completes |
+| Does it auto-create contacts? | Only if auto_create_drafts setting is true (default: false) |
+| What triggers extraction? | New literature note or research report creation |
+| How are entities reported? | Appended to research output with confidence scores |
+
+### Agents This Command Invokes
+
+| Agent | Purpose |
+|-------|---------|
+| crm-entity-extractor | Extract and classify entities from research content |
+
+### Integration Points
+
+- **gtd-research-processor** - Triggers hook after literature note creation
+- **research-link-processor** - Triggers hook after research report creation
+- **crm-entity-extractor** - Performs actual entity extraction
+- **crm-contact-maintainer** - Deduplicates any auto-created contacts
+
+---
+
 Extracts entities from research outputs when research processor completes.
 
 ## Trigger

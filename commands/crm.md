@@ -1,5 +1,49 @@
 # /crm
 
+## Command Context
+
+### When to Reference CRM Module
+
+**Always reference when:**
+- User mentions contacts, relationships, or networking
+- Preparing for trips, events, or meetings
+- Need to track who you've talked to or when
+- Building or maintaining professional networks
+- User asks about "who do I know in [location/industry]"
+
+**Key decisions the module informs:**
+- Who to reconnect with before dormancy
+- Which relationships need attention
+- Meeting preparation with contact context
+- Network growth and maintenance strategy
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| How does CRM track interactions? | Automatically scans journals and calendar for wiki-link mentions |
+| Where are contacts stored? | [space]/contacts/ folders (people, companies, projects, events) |
+| Can it auto-create contacts? | Only with confirmation or auto_create flag |
+| What's the primary entry point? | /crm command with intent detection |
+
+### Agents This Command Invokes
+
+| Agent | Purpose |
+|-------|---------|
+| crm-interaction-extractor | Scan journals/calendar for interactions |
+| crm-relationship-scorer | Calculate relationship health scores |
+| crm-entity-extractor | Extract entities from research (via manual trigger) |
+| crm-contact-maintainer | Database quality and maintenance (via /crm maintenance) |
+
+### Integration Points
+
+- **/today** - Shows meeting context and CRM follow-ups (via today-hook)
+- **/gtd-weekly-review** - Includes relationship health overview (via weekly-hook)
+- **gtd-research-processor** - Extracts entities from research (via research-hook)
+- **Nightshift** - Daily scans and index updates (via nightshift-hook)
+
+---
+
 Contact Relationship Management - single entry point for all CRM operations.
 
 ## Intent Detection

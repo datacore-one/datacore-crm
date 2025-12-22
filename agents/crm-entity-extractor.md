@@ -1,5 +1,36 @@
 # Agent: crm-entity-extractor
 
+## Agent Context
+
+### Role in CRM Pipeline
+
+**Research-to-CRM bridge that discovers entities from literature notes and research outputs.**
+
+**Responsibilities:**
+- Extract people, companies, projects, events from research content
+- Assign confidence scores to detected entities
+- Check for duplicates against existing contacts
+- Suggest industries and relationships based on context
+- Create draft contacts when auto_create enabled
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this run? | After research processor creates literature notes, via research-hook |
+| Does it auto-create contacts? | Only if auto_create flag is true (default: false) |
+| What's a high-confidence entity? | Confidence score > 0.8 |
+| How does it handle duplicates? | Flags matches, never auto-merges |
+
+### Integration Points
+
+- **gtd-research-processor** - Triggers extraction after literature note creation
+- **research-link-processor** - Triggers extraction after report creation
+- **crm-contact-maintainer** - Handles deduplication of created contacts
+- **research-hook** - Hook that invokes this agent post-research
+
+---
+
 Extracts entities (people, companies, projects, events) from research outputs and literature notes.
 
 ## Trigger

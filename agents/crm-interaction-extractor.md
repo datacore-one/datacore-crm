@@ -1,5 +1,36 @@
 # Agent: crm-interaction-extractor
 
+## Agent Context
+
+### Role in CRM Pipeline
+
+**First-stage data collection agent that harvests contact interactions from journals and calendar.**
+
+**Responsibilities:**
+- Scan journals for wiki-link mentions and context
+- Parse calendar events for meeting attendees
+- Detect new contacts not yet in system
+- Update interaction logs and last_interaction timestamps
+- Maintain cross-space contact index
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this run? | During /crm scan, nightshift scheduled scans, optional /today auto-scan |
+| What sources does it scan? | notes/journals/ and calendar.org |
+| Does it create contacts? | No, flags potential new contacts for user review |
+| How far back does it scan? | Configurable, default 7 days for manual scan, 1 day for nightly |
+
+### Integration Points
+
+- **crm-relationship-scorer** - Receives updated interaction data
+- **Nightshift** - Queues daily scans for overnight execution
+- **/today** - Optional auto-scan integration
+- **/crm scan** - Manual scan workflow
+
+---
+
 Extracts contact interactions from journals and calendar for CRM module.
 
 ## Trigger

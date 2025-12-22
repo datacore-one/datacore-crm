@@ -1,5 +1,35 @@
 # Agent: crm-relationship-scorer
 
+## Agent Context
+
+### Role in CRM Pipeline
+
+**Quantifies relationship health through algorithmic scoring of interaction patterns.**
+
+**Responsibilities:**
+- Calculate relationship scores using weighted algorithm (recency, frequency, depth, reciprocity)
+- Assign status categories (Active, Warming, Cooling, Dormant)
+- Identify contacts needing attention
+- Track relationship trends over time
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this run? | After interaction extraction, during /crm status, weekly review |
+| What triggers recalculation? | New interactions, manual request, scheduled maintenance |
+| What's the scoring range? | 0.0-1.0, with thresholds at 0.4, 0.5, 0.7 |
+| Can it create tasks? | No, only suggests actions for review |
+
+### Integration Points
+
+- **crm-interaction-extractor** - Provides interaction data for scoring
+- **crm-contact-maintainer** - Uses scores for attention flags
+- **/crm status** - Displays scores in dashboard
+- **/gtd-weekly-review** - Includes relationship health overview
+
+---
+
 Calculates relationship health scores for contacts based on interaction patterns.
 
 ## Trigger

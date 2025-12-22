@@ -1,5 +1,43 @@
 # CRM Hook: /today Integration
 
+## Command Context
+
+### When to Reference /today Command
+
+**Always reference when:**
+- User starts their day and runs /today
+- Meetings are scheduled for today
+- CRM follow-ups are due
+- Contact context is needed for daily planning
+
+**Key decisions the module informs:**
+- Who you're meeting with today and their status
+- Which CRM tasks are due
+- Which high-value contacts are becoming dormant
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this hook run? | Every time user runs /today command |
+| What sections does it add? | Meeting context, follow-ups due, attention needed (optional) |
+| Can sections be skipped? | Yes, if no data or auto_scan disabled for attention |
+| Where does data come from? | calendar.org, next_actions.org, contacts-index.yaml |
+
+### Agents This Command Invokes
+
+| Agent | Purpose |
+|-------|---------|
+| None (reads data) | Hook reads pre-compiled index and calendar directly |
+
+### Integration Points
+
+- **/today command** - Calls this hook to inject CRM sections
+- **crm-interaction-extractor** - Provides fresh interaction data (if auto_scan enabled)
+- **Nightshift** - Ensures contact index is fresh each morning
+
+---
+
 This hook adds CRM context to the daily briefing.
 
 ## Trigger

@@ -1,5 +1,45 @@
 # CRM Hook: /gtd-weekly-review Integration
 
+## Command Context
+
+### When to Reference /gtd-weekly-review Command
+
+**Always reference when:**
+- User performs weekly GTD review
+- Need to assess relationship health trends
+- Planning follow-ups for next week
+- Reviewing network maintenance progress
+
+**Key decisions the module informs:**
+- Which relationships are improving vs declining
+- Network health and engagement trends
+- Follow-up prioritization for next week
+- Archive vs reconnect decisions for dormant contacts
+
+### Quick Reference
+
+| Question | Answer |
+|----------|--------|
+| When does this hook run? | During weekly GTD review (typically Friday afternoon) |
+| What sections does it add? | Health overview, weekly activity, follow-up queue, attention needed |
+| Does it trigger actions? | Offers to run scan, update scores, create tasks, archive contacts |
+| How does it show trends? | Compares scores vs previous week |
+
+### Agents This Command Invokes
+
+| Agent | Purpose |
+|-------|---------|
+| crm-relationship-scorer | Updates relationship scores for trend analysis |
+| crm-interaction-extractor | Scans full week if requested |
+
+### Integration Points
+
+- **/gtd-weekly-review command** - Calls this hook for CRM section
+- **crm-relationship-scorer** - Provides score trends and status distribution
+- **Nightshift** - Ensures data is current before weekly review
+
+---
+
 This hook adds CRM analysis to the weekly GTD review.
 
 ## Trigger
