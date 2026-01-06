@@ -20,6 +20,20 @@ location: ""
 introduced_by: ""
 met_at: ""
 discovered_in: ""                 # Source: "[[Literature Note]]" | "research" | "journal"
+# Import metadata (set by /crm import)
+import_source: ""                 # gmail | apple | manual
+import_date: ""                   # When imported
+photo: ""                         # Path to photo: .photos/Name.jpg
+# Email history (set by /crm enrich)
+email_history:
+  first_contact: ""               # Earliest email exchange
+  last_contact: ""                # Most recent email
+  total_messages: 0               # Total email count
+  sent_count: 0                   # Emails sent to contact
+  received_count: 0               # Emails received from contact
+  frequency: ""                   # e.g., "3.2/month"
+  topics: []                      # Keywords from subject lines
+  relationship_status: ""         # active | warming | cooling | dormant
 created: {{DATE}}
 updated: {{DATE}}
 last_interaction: {{DATE}}
@@ -44,6 +58,10 @@ last_interaction: {{DATE}}
 ## Notes
 
 <!-- Freeform notes, personality observations, conversation highlights -->
+
+## Email History
+
+<!-- Auto-populated by /crm enrich command -->
 
 ## Interaction Log
 

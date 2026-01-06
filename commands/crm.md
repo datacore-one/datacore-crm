@@ -57,6 +57,8 @@ If the user provides context with the command, infer intent:
 | `/crm scan` | Scan interactions | Run journal/calendar scan |
 | `/crm status` | Network status | Show dashboard |
 | `/crm new` or `/crm add` | Create contact | Run create workflow |
+| `/crm import` or `/crm import [file]` | Import contacts | Run vCard import workflow |
+| `/crm enrich` | Enrich with email | Run email enrichment workflow |
 
 If no context or unclear intent, present the menu.
 
@@ -71,6 +73,8 @@ What would you like to do?
 2. **Prepare for trip/event** - Pre-meeting briefing with relevant contacts
 3. **Scan for interactions** - Update from journals and calendar
 4. **Create or update contact** - Add new or edit existing contact
+5. **Import contacts** - Import from Apple Contacts or Gmail (vCard)
+6. **Enrich with email history** - Add interaction data from Gmail
 ```
 
 ## Workflows
@@ -254,6 +258,125 @@ Next steps:
 - Log first interaction with /crm log
 - Mention as [[John Smith]] in journals
 ```
+
+### 5. Import Contacts (vCard)
+
+Import contacts from Apple Contacts or Gmail exports.
+
+**Step 1: Export from source**
+
+| Source | How to Export |
+|--------|---------------|
+| Apple Contacts | Contacts.app -> File -> Export -> Export vCard |
+| Gmail | contacts.google.com -> Export -> vCard format |
+
+**Step 2: Run import**
+
+```bash
+# Via CLI
+python crm_cli.py import ~/Downloads/contacts.vcf --space 0-personal
+
+# Preview first (dry run)
+python crm_cli.py import contacts.vcf --dry-run
+```
+
+**Step 3: Review output**
+
+```
+Import Results:
+  Total parsed: 245
+  New contacts: 231
+  Duplicates skipped: 14
+  Photos: 89
+
+  By source:
+    apple: 150
+    gmail: 95
+
+  Merge candidates (5):
+    - John Smith + Jon Smith (fuzzy name match)
+
+  Report saved to: 0-personal/content/reports/2025-12-22-contact-import.md
+```
+
+**Step 4: Review drafts**
+
+All imported contacts have `status: draft`. Review and activate:
+
+```bash
+# List draft contacts
+python crm_cli.py status
+
+# Or manually review in contacts/people/
+# Change status: draft to status: active after review
+```
+
+### 6. Enrich with Email History
+
+Extract interaction history from Gmail for each contact.
+
+**Prerequisites:**
+- Gmail API OAuth configured (run `python gmail.py setup --account you@gmail.com` first)
+- Contact must have an email address in `channels.email`
+
+**Step 1: Run enrichment**
+
+```bash
+# Enrich all draft contacts
+python crm_cli.py enrich --gmail you@gmail.com --all-drafts
+
+# Or enrich specific contact by email
+python crm_cli.py enrich --gmail you@gmail.com --email contact@example.com
+```
+
+**Step 2: Review results**
+
+```
+Enriching all draft contacts in 0-personal...
+  Enriching John Smith (john@example.com)...
+    Found 47 emails, 2023-05-15 to 2025-12-18
+
+Results:
+  Total drafts: 231
+  Enriched: 189
+  No email: 12
+  No history: 30
+```
+
+**Step 3: Review enriched contacts**
+
+Each contact now has an Email History section:
+
+```markdown
+## Email History
+
+| Metric | Value |
+|--------|-------|
+| First contact | 2023-05-15 |
+| Last contact | 2025-12-18 |
+| Total emails | 47 |
+| Sent | 22 |
+| Received | 25 |
+| Frequency | 3.2/month |
+| Status | active |
+
+**Topics:** partnership, proposal, funding, timeline
+
+### Key Threads
+- [Dec 2025] Partnership proposal follow-up (5 emails)
+- [Nov 2025] Contract review (3 emails)
+- [Oct 2025] Initial outreach (2 emails)
+```
+
+**Data extracted:**
+- `first_contact` - Date of first email exchange
+- `last_contact` - Most recent email
+- `total_messages` - Total email count
+- `sent_count` / `received_count` - Directional counts
+- `frequency` - Emails per month average
+- `topics` - Keywords extracted from subject lines
+- `key_threads` - Most active conversation threads
+- `relationship_status` - Calculated from recency (active/warming/cooling/dormant)
 
 ## Additional Operations
 

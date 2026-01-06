@@ -8,6 +8,8 @@ Unified entry point for all CRM operations:
 - contact: Look up specific contact details
 - attention: List contacts needing follow-up
 - trip: Prepare briefing for upcoming trip/event
+- import: Import contacts from vCard files (Apple Contacts, Gmail)
+- enrich: Enrich contacts with email interaction history
 
 Usage:
     python crm_cli.py status
@@ -15,6 +17,8 @@ Usage:
     python crm_cli.py contact "John Smith"
     python crm_cli.py attention
     python crm_cli.py trip "Dubai, Dec 15-20"
+    python crm_cli.py import contacts.vcf --space 0-personal
+    python crm_cli.py enrich --all-drafts --gmail your@gmail.com
 """
 
 import sys
@@ -343,6 +347,101 @@ def cmd_trip(args):
     print(format_trip_output(args.destination, contacts, by_contact))
 
 
+def cmd_import(args):
+    """Import contacts from vCard files."""
+    from vcard_adapter import VCardImporter
+
+    data_root = Path(args.data_root)
+    files = [Path(f) for f in args.files]
+
+    # Validate files exist
+    for f in files:
+        if not f.exists():
+            print(f"Error: File not found: {f}")
+            return
+
+    importer = VCardImporter(data_root, args.space)
+    report = importer.import_vcards(
+        files,
+        dry_run=args.dry_run,
+        skip_existing=not args.include_existing
+    )
+
+    print(f"\n{'Preview' if args.dry_run else 'Import'} Results:")
+    print(f"  Total parsed: {report.total_parsed}")
+    print(f"  New contacts: {report.new_contacts}")
+    print(f"  Duplicates skipped: {report.duplicates_skipped}")
+    print(f"  Photos: {report.photos_imported}")
+
+    if report.by_source:
+        print(f"\n  By source:")
+        for source, count in report.by_source.items():
+            print(f"    {source}: {count}")
+
+    if report.duplicate_pairs:
+        print(f"\n  Merge candidates ({len(report.duplicate_pairs)}):")
+        for pair in report.duplicate_pairs[:5]:
+            print(f"    - {pair['contact1']} + {pair['contact2']} ({pair['reason']})")
+
+    if report.errors:
+        print(f"\n  Errors:")
+        for error in report.errors:
+            print(f"    - {error}")
+
+    if not args.dry_run and report.new_contacts > 0:
+        from datetime import date
+        # Save report
+        report_dir = data_root / args.space / 'content' / 'reports'
+        report_dir.mkdir(parents=True, exist_ok=True)
+        report_file = report_dir / f"{date.today().isoformat()}-contact-import.md"
+        report_file.write_text(importer.generate_report_markdown(report))
+        print(f"\n  Report saved to: {report_file}")
+
+
+def cmd_enrich(args):
+    """Enrich contacts with email interaction history."""
+    from email_enricher import ContactEnricher
+
+    data_root = Path(args.data_root)
+
+    if not args.gmail:
+        print("Error: --gmail account required for email enrichment")
+        print("Usage: python crm_cli.py enrich --gmail your@gmail.com --all-drafts")
+        return
+
+    enricher = ContactEnricher(data_root, args.gmail, args.space)
+
+    if args.all_drafts:
+        print(f"\nEnriching all draft contacts in {args.space}...")
+        results = enricher.enrich_all_drafts()
+
+        print(f"\nResults:")
+        print(f"  Total drafts: {results['total']}")
+        print(f"  Enriched: {results['enriched']}")
+        print(f"  No email: {results['no_email']}")
+        print(f"  No history: {results['no_history']}")
+
+        if results['errors']:
+            print(f"\n  Errors:")
+            for error in results['errors']:
+                print(f"    - {error}")
+
+    elif args.email:
+        history = enricher.enrich_by_email(args.email)
+        if history:
+            print(f"\nEnriched contact with {history.total_messages} emails")
+            print(f"  First contact: {history.first_contact}")
+            print(f"  Last contact: {history.last_contact}")
+            print(f"  Topics: {', '.join(history.topics)}")
+        else:
+            print(f"Could not enrich contact with email: {args.email}")
+    else:
+        print("Specify --email or --all-drafts")
+        print("Usage:")
+        print("  python crm_cli.py enrich --gmail you@gmail.com --email contact@example.com")
+        print("  python crm_cli.py enrich --gmail you@gmail.com --all-drafts")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="CRM CLI - Contact Relationship Management",
@@ -354,6 +453,8 @@ Examples:
   python crm_cli.py contact "John"      Look up John
   python crm_cli.py attention           Show who needs follow-up
   python crm_cli.py trip "Dubai"        Prepare for Dubai trip
+  python crm_cli.py import contacts.vcf Import vCard contacts
+  python crm_cli.py enrich --gmail me@gmail.com --all-drafts
         """
     )
 
@@ -385,6 +486,24 @@ Examples:
     trip_parser = subparsers.add_parser('trip', help='Trip preparation')
     trip_parser.add_argument('destination', help='Trip destination/event')
     trip_parser.set_defaults(func=cmd_trip)
+
+    # import
+    import_parser = subparsers.add_parser('import', help='Import contacts from vCard')
+    import_parser.add_argument('files', nargs='+', help='vCard files to import')
+    import_parser.add_argument('--space', default='0-personal', help='Target space')
+    import_parser.add_argument('--dry-run', action='store_true', help='Preview without creating')
+    import_parser.add_argument('--include-existing', action='store_true', help='Import duplicates too')
+    import_parser.add_argument('--data-root', default=str(Path.home() / 'Data'), help='Data root path')
+    import_parser.set_defaults(func=cmd_import)
+
+    # enrich
+    enrich_parser = subparsers.add_parser('enrich', help='Enrich contacts with email history')
+    enrich_parser.add_argument('--gmail', help='Gmail account to query')
+    enrich_parser.add_argument('--email', help='Enrich specific contact by email')
+    enrich_parser.add_argument('--all-drafts', action='store_true', help='Enrich all draft contacts')
+    enrich_parser.add_argument('--space', default='0-personal', help='Target space')
+    enrich_parser.add_argument('--data-root', default=str(Path.home() / 'Data'), help='Data root path')
+    enrich_parser.set_defaults(func=cmd_enrich)
 
     args = parser.parse_args()
 
