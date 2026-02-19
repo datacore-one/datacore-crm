@@ -3,7 +3,7 @@
 Contact Tagger - Auto-tag contacts based on domain patterns and rules.
 
 Tags are detected from:
-- Domain patterns (e.g., @team-a.example.com → "team-a")
+- Domain patterns (e.g., @organization.example.com → "organization")
 - Email patterns (e.g., newsletter@* → "newsletter")
 - User-defined rules in rules.local.yaml
 
@@ -24,9 +24,9 @@ from typing import List, Dict, Set, Optional
 # Built-in domain → tag mappings
 DOMAIN_TAGS = {
     # Internal teams
-    'team-a.example.com': [\'team-a\', 'internal'],
-    'team-a.example.com': [\'team-a\', 'internal'],
-    'team-b.example.com': [\'team-b\', 'internal'],
+    'organization.example.com': ['organization', 'internal'],
+    'organization.example.net': ['organization', 'internal'],
+    'infra.example.org': ['infrastructure', 'internal'],
 
     # Known investor domains
     'usv.com': ['investor', 'vc'],
@@ -299,14 +299,14 @@ def main():
     tagger = ContactTagger()
 
     test_emails = [
-        'user@example.com',
+        'user@organization.example.com',
         'fred@usv.com',
         'nejc.novak@novak-law.eu',
         'newsletter@techcrunch.com',
         'noreply@github.com',
         'researcher@stanford.edu',
         'someone@random.com',
-        'contributor@example.com',
+        'colleague@infra.example.org',
     ]
 
     print("Contact Tagger Test")

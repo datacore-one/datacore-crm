@@ -5,6 +5,7 @@ This gets the actual contacts who participated in partnership discussions.
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 from datetime import datetime
@@ -17,7 +18,7 @@ def load_telegram_export(json_path):
 
 def load_kept_groups():
     """Load the groups that were kept (have names)."""
-    groups_file = Path('/path/to/space/1-active/crm-analysis/partnership-groups.md')
+    groups_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/partnership-groups.md'
 
     kept_group_names = []
 
@@ -87,7 +88,7 @@ def extract_members_from_groups(data, kept_group_names):
         participants = set()
         for msg in messages:
             from_user = msg.get('from')
-            if from_user and from_user != 'Owner':  # Exclude yourself
+            if from_user and from_user != os.environ.get('DATACORE_USER', 'User'):  # Exclude yourself
                 participants.add(from_user)
 
         # Count messages per participant
@@ -174,7 +175,8 @@ Sorted by total message count across all partnership groups.
             report += f"- {group_data['group']} ({group_data['messages']} messages)\n"
 
         # Check if contact exists
-        contact_file = Path(f"/path/to/space/contacts/people/{name}.md")
+        data_root = os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))
+        contact_file = Path(f"{data_root}/0-personal/contacts/people/{name}.md")
         if contact_file.exists():
             report += f"\n**Status:** Exists in CRM\n"
         else:
@@ -214,11 +216,11 @@ People active in 5+ partnership groups (key connectors):
 
 ---
 
-*Note: Excludes "Owner" (you) from extraction*
+*Note: Excludes the configured user from extraction*
 """
 
     # Save report
-    output_file = Path('/path/to/space/1-active/crm-analysis/partnership-group-members.md')
+    output_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/partnership-group-members.md'
     with open(output_file, 'w') as f:
         f.write(report)
 
@@ -229,7 +231,8 @@ People active in 5+ partnership groups (key connectors):
     existing_members = []
 
     for name, data in sorted_members:
-        contact_file = Path(f"/path/to/space/contacts/people/{name}.md")
+        data_root = os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))
+        contact_file = Path(f"{data_root}/0-personal/contacts/people/{name}.md")
 
         if contact_file.exists():
             existing_members.append(name)
@@ -265,7 +268,7 @@ Showing top 100 by message activity.
 
             creation_report += "\n"
 
-        creation_file = Path('/path/to/space/1-active/crm-analysis/new-group-members-to-create.md')
+        creation_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/new-group-members-to-create.md'
         with open(creation_file, 'w') as f:
             f.write(creation_report)
 

@@ -3,9 +3,9 @@
 Inbox Cleanup - Delete emails by category.
 
 Usage:
-    python inbox_cleanup.py delete --account user@example.com --category github
-    python inbox_cleanup.py delete --account user@example.com --category newsletters
-    python inbox_cleanup.py delete --account user@example.com --category automated
+    python inbox_cleanup.py delete --account user@organization.example.com --category github
+    python inbox_cleanup.py delete --account user@organization.example.com --category newsletters
+    python inbox_cleanup.py delete --account user@organization.example.com --category automated
 """
 
 import sys
@@ -32,7 +32,7 @@ CATEGORIES = {
             'newsletter', 'substack.com', 'beehiiv.com', 'getrevue.co',
             'mailchimp.com', 'sendgrid.net', 'constantcontact.com',
             'news@', 'digest@', 'weekly@', 'daily@', 'updates@',
-            'marketing@', 'info@team-a.example.com3.com'
+            'marketing@', 'info@organization.example.com'
         ],
         # Will build query dynamically
     },
@@ -43,7 +43,7 @@ CATEGORIES = {
             'alert@', 'alerts@', 'system@', 'mailer@', 'daemon@',
             'postmaster@', 'bounce@', 'auto@', 'automated@',
             'comments-noreply@docs.google.com', 'drive-shares-noreply@google.com',
-            'noreply@kraken.com', 'no-reply@hackmd.io', 'noreply@beehive.team-b.example.com',
+            'noreply@kraken.com', 'no-reply@hackmd.io', 'noreply@beehive.infra.example.org',
             'noreply@notify.cloudflare.com', 'no-reply@docsend.com',
             'do-not-reply@trello.com', 'notify@mail.notion.so'
         ],
@@ -73,13 +73,13 @@ def build_newsletter_query():
         'newsletter@techcrunch.com',
         'weekinethereum@substack.com',
         'veradiverdict@substack.com',
-        'info@team-b.example.com',
+        'info@infra.example.org',
         'thedailygwei@substack.com',
         'platformer@substack.com',
         'notboring@substack.com',
         'team@coinlist.co',
         'therundownai@mail.beehiiv.com',
-        'info@team-a.example.com3.com',
+        'info@organization.example.com',
         'info@mail.hotels.com',
         'newsletter@farnamstreetblog.com',
         'hello@mydata.org',
@@ -114,7 +114,7 @@ def build_automated_query():
         'comments-noreply@docs.google.com',
         'no-reply@hackmd.io',
         'drive-shares-noreply@google.com',
-        'noreply@beehive.team-b.example.com',
+        'noreply@beehive.infra.example.org',
         'noreply@notify.cloudflare.com',
         'no-reply@docsend.com',
         'do-not-reply@trello.com',

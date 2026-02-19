@@ -3,8 +3,8 @@
 Inbox Analyzer - Extract sender statistics from Gmail for CRM and cleanup.
 
 Usage:
-    python inbox_analyzer.py analyze --account user@example.com
-    python inbox_analyzer.py analyze --account user@example.com --output /tmp/senders.txt
+    python inbox_analyzer.py analyze --account user@organization.example.com
+    python inbox_analyzer.py analyze --account user@organization.example.com --output /tmp/senders.txt
 """
 
 import sys
@@ -61,7 +61,7 @@ def classify_sender(email: str, name: str) -> str:
         return 'social'
 
     # Via forwarding (Zapier, etc)
-    if 'via zapier' in name_lower or '@team-a.example.com' in email_lower and 'via' in name_lower:
+    if 'via zapier' in name_lower or '@organization.example.com' in email_lower and 'via' in name_lower:
         return 'forwarded'
 
     # Default: personal/human

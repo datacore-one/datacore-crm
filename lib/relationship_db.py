@@ -11,7 +11,7 @@ Usage:
     db = RelationshipDB("~/.datacore/state/relationships.db")
     db.index_mbox(
         mbox_path="~/Library/Thunderbird/.../All Mail",
-        my_email="user@example.com",
+        my_email="user@organization.example.com",
         rules_path=".datacore/modules/mail/rules.base.yaml",
         sensitive_domains=["*-law.eu"],
         excluded_domains=[]

@@ -5,6 +5,7 @@ Groups with deleted names are ignored.
 Groups with names have contacts extracted.
 """
 
+import os
 import re
 from pathlib import Path
 from collections import defaultdict
@@ -86,8 +87,8 @@ def extract_contacts_from_group_name(group_name):
             return contacts
 
     # If no separator, check for common patterns
-    # "Swarm Foundation", "Gordon AI", etc.
-    if 'Team A' in name or 'Swarm' in name or 'Gordon' in name or 'FDS' in name:
+    # Skip our own organization names
+    if 'Organization' in name or 'OurProject' in name:
         # These are our own projects, skip
         return contacts
 
@@ -100,7 +101,7 @@ def extract_contacts_from_group_name(group_name):
 def categorize_contact(name):
     """Determine if contact is company, person, or project."""
     # Skip our own entities
-    if any(x in name.lower() for x in [\'team-a\', 'swarm', 'gordon', 'fds', 'fair data']):
+    if any(x in name.lower() for x in ['our_org', 'our_project']):
         return None
 
     # Companies/Exchanges
@@ -128,7 +129,7 @@ def categorize_contact(name):
     return 'company'  # Default to company for partnerships
 
 def main():
-    file_path = Path('/path/to/space/1-active/crm-analysis/partnership-groups.md')
+    file_path = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/partnership-groups.md'
 
     print("Parsing partnership groups...")
     groups = parse_partnership_groups(file_path)
@@ -188,7 +189,8 @@ Unique contacts extracted: {len(all_contacts)}
             report += f"- {occ['group']} ({occ['messages']} messages){notes_text}\n"
 
         # Check if contact exists in CRM
-        contact_file = Path(f"/path/to/space/contacts/people/{contact_name}.md")
+        data_root = os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))
+        contact_file = Path(f"{data_root}/0-personal/contacts/people/{contact_name}.md")
         if contact_file.exists():
             report += f"\n**Status:** Contact exists in CRM at `contacts/people/{contact_name}.md`\n"
         else:
@@ -206,7 +208,7 @@ Unique contacts extracted: {len(all_contacts)}
         report += "*No special instructions*\n"
 
     # Save report
-    output_file = Path('/path/to/space/1-active/crm-analysis/partnership-contacts-extracted.md')
+    output_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/partnership-contacts-extracted.md'
     with open(output_file, 'w') as f:
         f.write(report)
 
@@ -217,7 +219,8 @@ Unique contacts extracted: {len(all_contacts)}
     existing_contacts = []
 
     for contact_name, occurrences in sorted_contacts:
-        contact_file = Path(f"/path/to/space/contacts/people/{contact_name}.md")
+        data_root = os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))
+        contact_file = Path(f"{data_root}/0-personal/contacts/people/{contact_name}.md")
 
         if contact_file.exists():
             existing_contacts.append(contact_name)
@@ -246,7 +249,7 @@ Found {len(new_contacts)} new contacts from partnership groups.
                 creation_report += f"- {g}\n"
             creation_report += "\n"
 
-        creation_file = Path('/path/to/space/1-active/crm-analysis/new-contacts-to-create.md')
+        creation_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/new-contacts-to-create.md'
         with open(creation_file, 'w') as f:
             f.write(creation_report)
 

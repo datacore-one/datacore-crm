@@ -10,7 +10,7 @@ Analyzes:
 - Recency (last contact date)
 
 Usage:
-    python contact_analyzer.py analyze --account user@example.com
+    python contact_analyzer.py analyze --account user@organization.example.com
 """
 
 import sys
@@ -203,23 +203,23 @@ def generate_report(analysis: Dict[str, Any], account: str, output_file: str = N
     lines.append("KEY ORGANIZATIONAL GROUPS:")
     lines.append("=" * 80)
 
-    # Team A
-    team_a_contacts = analysis['by_domain'].get('team-a.example.com', [])
-    if team_a_contacts:
-        lines.append("\n## TEAM A (team-a.example.com)")
-        lines.append(f"   {len(team_a_contacts)} contacts, {sum(c['total'] for c in team_a_contacts):,} total emails")
+    # Organization team
+    org_contacts = analysis['by_domain'].get('organization.example.com', [])
+    if org_contacts:
+        lines.append("\n## ORGANIZATION TEAM (organization.example.com)")
+        lines.append(f"   {len(org_contacts)} contacts, {sum(c['total'] for c in org_contacts):,} total emails")
         lines.append("-" * 60)
-        for c in team_a_contacts[:20]:
+        for c in org_contacts[:20]:
             direction_icon = {'balanced': '<->', 'mostly_sent': ' ->', 'mostly_received': '<- '}[c['direction']]
             lines.append(f"  {c['total']:>5} {direction_icon} {c['email']:<40} {c['name'][:25]}")
 
-    # Team B
-    team_b_contacts = analysis['by_domain'].get('team-b.example.com', [])
-    if team_b_contacts:
-        lines.append("\n## TEAM B (team-b.example.com)")
-        lines.append(f"   {len(team_b_contacts)} contacts, {sum(c['total'] for c in team_b_contacts):,} total emails")
+    # Infrastructure team
+    infra_contacts = analysis['by_domain'].get('infra.example.org', [])
+    if infra_contacts:
+        lines.append("\n## INFRASTRUCTURE TEAM (infra.example.org)")
+        lines.append(f"   {len(infra_contacts)} contacts, {sum(c['total'] for c in infra_contacts):,} total emails")
         lines.append("-" * 60)
-        for c in team_b_contacts[:20]:
+        for c in infra_contacts[:20]:
             direction_icon = {'balanced': '<->', 'mostly_sent': ' ->', 'mostly_received': '<- '}[c['direction']]
             lines.append(f"  {c['total']:>5} {direction_icon} {c['email']:<40} {c['name'][:25]}")
 
@@ -227,7 +227,7 @@ def generate_report(analysis: Dict[str, Any], account: str, output_file: str = N
     lines.append("\n## HIGH FREQUENCY CONTACTS (non-team, 50+ emails)")
     lines.append("-" * 60)
     high_freq = [c for c in analysis['by_frequency'].get('high', [])
-                 if c['domain'] not in ['team-a.example.com', 'team-b.example.com', 'gmail.com', 'google.com']]
+                 if c['domain'] not in ['organization.example.com', 'infra.example.org', 'gmail.com', 'google.com']]
     for c in high_freq[:30]:
         direction_icon = {'balanced': '<->', 'mostly_sent': ' ->', 'mostly_received': '<- '}[c['direction']]
         lines.append(f"  {c['total']:>5} {direction_icon} {c['email']:<45} {c['name'][:25]}")
@@ -236,7 +236,7 @@ def generate_report(analysis: Dict[str, Any], account: str, output_file: str = N
     lines.append("\n## MEDIUM FREQUENCY CONTACTS (10-49 emails, CRM candidates)")
     lines.append("-" * 60)
     medium_freq = [c for c in analysis['by_frequency'].get('medium', [])
-                   if c['domain'] not in ['team-a.example.com', 'team-b.example.com', 'gmail.com', 'google.com']]
+                   if c['domain'] not in ['organization.example.com', 'infra.example.org', 'gmail.com', 'google.com']]
     for c in medium_freq[:40]:
         direction_icon = {'balanced': '<->', 'mostly_sent': ' ->', 'mostly_received': '<- '}[c['direction']]
         lines.append(f"  {c['total']:>5} {direction_icon} {c['email']:<45} {c['name'][:25]}")
@@ -245,7 +245,7 @@ def generate_report(analysis: Dict[str, Any], account: str, output_file: str = N
     lines.append("\n## BALANCED COMMUNICATION (likely real relationships)")
     lines.append("-" * 60)
     balanced = [c for c in analysis['by_direction'].get('balanced', [])
-                if c['total'] >= 5 and c['domain'] not in ['team-a.example.com', 'team-b.example.com']]
+                if c['total'] >= 5 and c['domain'] not in ['organization.example.com', 'infra.example.org']]
     balanced.sort(key=lambda x: x['total'], reverse=True)
     for c in balanced[:40]:
         lines.append(f"  {c['total']:>5} <-> {c['email']:<45} {c['name'][:25]}")
@@ -263,7 +263,7 @@ def generate_report(analysis: Dict[str, Any], account: str, output_file: str = N
     lines.append("\n## OUTREACH CONTACTS (I send more than receive)")
     lines.append("-" * 60)
     outreach = [c for c in analysis['by_direction'].get('mostly_sent', [])
-                if c['total'] >= 3 and c['domain'] not in ['team-a.example.com', 'team-b.example.com']]
+                if c['total'] >= 3 and c['domain'] not in ['organization.example.com', 'infra.example.org']]
     outreach.sort(key=lambda x: x['total'], reverse=True)
     for c in outreach[:30]:
         lines.append(f"  {c['total']:>5} -> {c['email']:<45} {c['name'][:25]}")
@@ -279,15 +279,15 @@ def generate_report(analysis: Dict[str, Any], account: str, output_file: str = N
 
     lines.append(f"""
 Contacts worth importing to CRM:
-- Team A: {len(team_a_contacts)} (internal, auto-import)
-- Team B: {len(team_b_contacts)} (internal, auto-import)
-- High frequency external: {high_count - len(team_a_contacts) - len(team_b_contacts)} (auto-import)
+- Organization team: {len(org_contacts)} (internal, auto-import)
+- Infrastructure team: {len(infra_contacts)} (internal, auto-import)
+- High frequency external: {high_count - len(org_contacts) - len(infra_contacts)} (auto-import)
 - Medium frequency external: {medium_count} (review & import)
 - Balanced communication: {balanced_count} (likely real relationships)
 
 Suggested groups for CRM:
-1. "Team A" - team-a.example.com domain
-2. "Team B" - team-b.example.com domain
+1. "Organization Team" - organization.example.com domain
+2. "Infrastructure Team" - infra.example.org domain
 3. "Business Contacts" - high/medium frequency, balanced direction
 4. "Investors/VCs" - specific domains like usv.com, a16z.com, etc.
 5. "Legal" - law firm domains

@@ -6,8 +6,8 @@ Fetches contacts from Google People API and exports as vCard or imports directly
 Requires OAuth re-authentication on first use to add contacts scope.
 
 Usage:
-    python google_contacts.py fetch --account user@example.com --output contacts.vcf
-    python google_contacts.py fetch --account user@example.com --import --space 0-personal
+    python google_contacts.py fetch --account user@organization.example.com --output contacts.vcf
+    python google_contacts.py fetch --account user@organization.example.com --import --space 0-personal
 """
 
 import os

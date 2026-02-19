@@ -4,11 +4,11 @@ Relationship CLI - Index and query the personal relationship database.
 
 Usage:
     # Index Thunderbird mbox
-    python relationship_cli.py index --account team-a
+    python relationship_cli.py index --account organization
 
     # Search and filter
     python relationship_cli.py search "investor"
-    python relationship_cli.py search --domain team-b.example.com
+    python relationship_cli.py search --domain infra.example.org
 
     # Relationship analysis
     python relationship_cli.py top --by frequency --limit 50
@@ -43,13 +43,13 @@ THUNDERBIRD_BASE = Path.home() / "Library" / "Thunderbird" / "Profiles"
 
 # Account configurations
 ACCOUNTS = {
-    \'team-a\': {
-        'email': 'user@example.com',
+    'organization': {
+        'email': 'user@organization.example.com',
         'imap_server': 'imap.gmail-1.com',
         'mbox_path': '[Gmail].sbd/All Mail'
     },
-    \'team-b\': {
-        'email': 'user@example.com',
+    'infrastructure': {
+        'email': 'user@infra.example.org',
         'imap_server': 'imap.gmail-4.com',  # Adjust as needed
         'mbox_path': '[Gmail].sbd/All Mail'
     }
@@ -138,7 +138,7 @@ def get_mbox_path(account: str) -> Optional[Path]:
 
 def cmd_index(args):
     """Index mbox files into relationship database."""
-    accounts = args.accounts if args.accounts else [\'team-a\']
+    accounts = args.accounts if args.accounts else ['organization']
 
     passphrase = get_passphrase() if not args.no_encrypt else None
 
@@ -387,7 +387,7 @@ def main():
     index_parser = subparsers.add_parser('index', help='Index mbox files')
     index_parser.add_argument(
         '--accounts', nargs='+', choices=list(ACCOUNTS.keys()),
-        help='Accounts to index (default: team-a)'
+        help='Accounts to index (default: organization)'
     )
     index_parser.add_argument(
         '--max', type=int, default=0,

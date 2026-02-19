@@ -304,10 +304,10 @@ Bridge contacts are often:
         # Check for common patterns
         domain_str = ' '.join(domains)
 
-        if \'team-a\' in domain_str:
-            return "Team A"
-        elif \'team-b\' in domain_str:
-            return "Team B"
+        if 'organization.example.com' in domain_str:
+            return "Organization Team"
+        elif 'infra.example.org' in domain_str:
+            return "Infrastructure Team"
         elif any(x in domain_str for x in ['law', 'legal']):
             return "Legal Contacts"
         elif any(x in domain_str for x in ['.vc', 'capital', 'ventures', 'usv']):

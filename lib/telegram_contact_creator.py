@@ -3,6 +3,7 @@
 Create CRM contact files for partnership contacts.
 """
 
+import os
 import re
 from pathlib import Path
 from datetime import datetime
@@ -10,7 +11,7 @@ from datetime import datetime
 # Load extracted contacts
 def load_extracted_contacts():
     """Parse the extraction report to get contact details."""
-    report_file = Path('/path/to/space/1-active/crm-analysis/partnership-contacts-extracted.md')
+    report_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/partnership-contacts-extracted.md'
 
     contacts = []
     current_contact = None
@@ -81,7 +82,7 @@ def determine_industries(groups):
         name = group['name'].lower()
 
         # Blockchain/Crypto
-        if any(x in name for x in ['swarm', 'eth', 'bzz', 'defi', 'web3', 'crypto', 'chain', 'dao']):
+        if any(x in name for x in ['eth', 'bzz', 'defi', 'web3', 'crypto', 'chain', 'dao']):
             industries.add('web3')
             industries.add('blockchain')
 
@@ -180,7 +181,7 @@ relationship_status: partner
 relationship_type: {relationship_type}
 relevance: {relevance}
 privacy: team
-space: team-a
+space: teamspace
 industries: {industries}
 source: telegram_partnership_groups
 partnership_stats:
@@ -249,12 +250,12 @@ def main():
 
     # Load special instructions
     special_instructions = {
-        'Swarm Orange Lounge': 'use for FDS campaign',
+        'Example Group': 'use for partner campaign',
         'Gnosis AI': 'reach out when Datacore is ready',
     }
 
     # Create contact files
-    contacts_dir = Path('/path/to/space/contacts/people')
+    contacts_dir = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/contacts/people'
     contacts_dir.mkdir(parents=True, exist_ok=True)
 
     created = []
@@ -311,7 +312,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}
 The following contacts have special action items:
 
 - **Gnosis AI**: reach out when Datacore is ready
-- **Swarm Orange Lounge**: use for FDS campaign (Note: This is a group, not a contact)
+- **Example Group**: use for partner campaign (Note: This is a group, not a contact)
 
 ## Next Steps
 
@@ -329,7 +330,7 @@ The following contacts have special action items:
 - Source: Telegram partnership groups analysis
 """
 
-    summary_file = Path('/path/to/space/1-active/crm-analysis/partnership-contacts-created-summary.md')
+    summary_file = Path(os.environ.get('DATACORE_ROOT', os.path.expanduser('~/Data'))) / '0-personal/1-active/crm-analysis/partnership-contacts-created-summary.md'
     with open(summary_file, 'w') as f:
         f.write(summary)
 
