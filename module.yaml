@@ -1,0 +1,98 @@
+manifest_version: 2
+name: crm
+version: 0.3.0
+description: |
+  Network Intelligence for Datacore.
+  Track entities (people, companies, projects, events), relationships, and industry landscape.
+  Capture from research, journals, calendar. Surface strategic insights in workflows.
+
+author: datacore-one
+repository: https://github.com/datacore-one/datacore-crm
+license: MIT
+builtin: true
+
+provides:
+  tools:
+    - name: lookup
+      description: "Look up a contact or company by name"
+      handler: tools/index.js
+    - name: recent_interactions
+      description: "List recent interactions with contacts"
+      handler: tools/index.js
+    - name: dormant
+      description: "Find dormant relationships needing attention"
+      handler: tools/index.js
+  skills: []
+  agents:
+    - crm-interaction-extractor
+    - crm-relationship-scorer
+    - crm-entity-extractor
+    - crm-contact-maintainer
+  commands:
+    - crm
+
+dependencies:
+  - core@>=1.0.0
+
+optional:
+  - gtd
+  - nightshift
+  - mail
+  - meeting-notes
+
+settings:
+  scan_days_default:
+    description: "Default journal scan range in days"
+    default: 7
+  dormant_threshold_days:
+    description: "Days without interaction before marked dormant"
+    default: 60
+  auto_scan_enabled:
+    description: "Enable automatic journal/calendar scans on /today"
+    default: true
+  relationship_score_weights:
+    description: "Weights for relationship score calculation"
+    default:
+      recency: 0.4
+      frequency: 0.3
+      depth: 0.2
+      reciprocity: 0.1
+  entity_extraction:
+    description: "Entity extraction settings"
+    default:
+      auto_create_drafts: false
+      min_confidence: 0.7
+  maintenance:
+    description: "Contact maintenance settings"
+    default:
+      weekly_maintenance: true
+      stale_threshold_days: 180
+
+hooks:
+  today:
+    - section: unblock_the_team
+      prompt: commands/today-hook.md
+      stage: gather
+      refresh: false
+
+related_dips:
+  - DIP-0002
+  - DIP-0009
+  - DIP-0010
+  - DIP-0012
+
+# DIP-0022 context
+context:
+  priority: on_match
+
+# Engrams
+engrams:
+  namespace: crm
+  scopes: [crm, contacts, relationships]
+
+recall:
+  # DIP-0029 — module-level engram scope; composes with command-level recall:.
+  scopes:
+    - module:crm
+  tags:
+    - crm

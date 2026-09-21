@@ -1,0 +1,8 @@
+# CRM Module Requirements
+# Install with: pip install -r requirements.txt
+
+# For domain parsing in company_extractor and domain_categorizer
+tldextract>=5.0.0
+
+# Core dependencies (usually already installed)
+pyyaml>=6.0
