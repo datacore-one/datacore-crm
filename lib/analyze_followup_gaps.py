@@ -11,13 +11,17 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
 
-# Conference dates (2024 focus - still relevant for follow-up)
-CONFERENCES_2024 = {
-    'DevCon Bangkok': datetime(2024, 11, 12),
-    'Token2049 Singapore': datetime(2024, 9, 18),
-    'Token2049 Dubai': datetime(2024, 4, 17),
-    'EthCC Paris': datetime(2024, 7, 8),
-}
+# Conferences you attended, for follow-up analysis. Per installation: point
+# CRM_CONFERENCES_FILE at a JSON object {"Conference name": "YYYY-MM-DD", ...}.
+def _load_conferences():
+    f = os.environ.get("CRM_CONFERENCES_FILE")
+    if not f or not Path(f).expanduser().exists():
+        return {}
+    raw = json.loads(Path(f).expanduser().read_text())
+    return {name: datetime.strptime(day, "%Y-%m-%d") for name, day in raw.items()}
+
+
+CONFERENCES_2024 = _load_conferences()
 
 def parse_date(date_str):
     """Parse Telegram date format."""
@@ -346,18 +350,18 @@ Contacts you met at conferences in 2024 but didn't follow up with (or weak follo
 ### Immediate Actions (This Week)
 
 1. **Reply to unanswered messages** - Prioritize contacts with high message counts (existing relationships)
-2. **Conference follow-ups** - Focus on DevCon Bangkok (most recent, Nov 2024)
-   - Template: "Great meeting you at DevCon! [specific memory]. Let's [specific next step]."
+2. **Conference follow-ups** - Focus on the most recent conference
+   - Template: "Great meeting you at [conference]! [specific memory]. Let's [specific next step]."
 
 ### Short-term (Next 2 Weeks)
 
-3. **Token2049 Singapore follow-ups** - Still relevant (Sep 2024)
+3. **Earlier conference follow-ups** - Still relevant within a few months
 4. **Gentle nudges** - For contacts waiting >30 days for your response to questions
    - Template: "Circling back on this - [original question]. Thoughts?"
 
 ### Strategy
 
-- **Prioritize by conference recency** - DevCon Bangkok > Token2049 Singapore > older
+- **Prioritize by conference recency** - most recent first
 - **High message count = high value** - Focus on contacts with 3+ messages during conference
 - **No follow-up > weak follow-up** - Better to follow up late than never
 - **Be specific** - Reference what you discussed at conference
