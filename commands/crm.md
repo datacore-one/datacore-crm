@@ -64,7 +64,7 @@ If the user provides context with the command, infer intent:
 | User Input | Intent | Action |
 |------------|--------|--------|
 | `/crm John Smith` | View contact | Show contact details |
-| `/crm trip to Dubai` | Trip prep | Run trip preparation workflow |
+| `/crm trip to Lisbon` | Trip prep | Run trip preparation workflow |
 | `/crm scan` | Scan interactions | Run journal/calendar scan |
 | `/crm status` | Network status | Show dashboard |
 | `/crm new` or `/crm add` | Create contact | Run create workflow |
