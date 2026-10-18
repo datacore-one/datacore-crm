@@ -22,7 +22,7 @@ from collections import defaultdict
 
 # Configuration
 LITERATURE_PATH = Path("/home/user/Data/0-personal/3-knowledge/literature/highlights")
-TELEGRAM_CONTACTS_PATH = Path("/home/user/Data/0-personal/4-outbox/archive/telegram-export-2025-12/telegram_crm_output/contacts")
+TELEGRAM_CONTACTS_PATH = Path("/home/user/Data/0-personal/4-archive/telegram-export-2025-12/telegram_crm_output/contacts")
 OUTPUT_CONTACTS_PATH = Path("/home/user/Data/0-personal/contacts/people")
 OUTPUT_COMPANIES_PATH = Path("/home/user/Data/0-personal/contacts/companies")
 EXISTING_CONTACTS_PATH = Path("/home/user/Data/0-personal/contacts/people")
@@ -640,7 +640,7 @@ Company contacts: `/home/user/Data/0-personal/contacts/companies/`
 **Appendix C: Source Attribution**
 
 - Literature notes: `0-personal/3-knowledge/literature/highlights/`
-- Telegram export: `0-personal/4-outbox/archive/telegram-export-2025-12/telegram_crm_output/contacts/`
+- Telegram export: `0-personal/4-archive/telegram-export-2025-12/telegram_crm_output/contacts/`
 """
 
         return report
