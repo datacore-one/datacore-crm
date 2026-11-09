@@ -16,7 +16,7 @@ Usage:
     python crm_cli.py scan --days 7
     python crm_cli.py contact "John Smith"
     python crm_cli.py attention
-    python crm_cli.py trip "Dubai, Dec 15-20"
+    python crm_cli.py trip "Lisbon, Dec 15-20"
     python crm_cli.py import contacts.vcf --space 0-personal
     python crm_cli.py enrich --all-drafts --gmail olivia@example.com
 """
@@ -452,7 +452,7 @@ Examples:
   python crm_cli.py scan --days 7       Scan last 7 days
   python crm_cli.py contact "John"      Look up John
   python crm_cli.py attention           Show who needs follow-up
-  python crm_cli.py trip "Dubai"        Prepare for Dubai trip
+  python crm_cli.py trip "Lisbon"       Prepare for Lisbon trip
   python crm_cli.py import contacts.vcf Import vCard contacts
   python crm_cli.py enrich --gmail frank@example.com --all-drafts
         """

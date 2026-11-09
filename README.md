@@ -22,7 +22,7 @@ Requires a working [Datacore](https://datacore.one) installation.
 
 # Or with specific intent:
 /crm John Smith          # View contact
-/crm trip to Dubai       # Trip preparation
+/crm trip to Lisbon       # Trip preparation
 /crm scan                # Scan journals/calendar
 /crm status              # Network dashboard
 /crm new                 # Create contact
@@ -130,7 +130,7 @@ python crm_cli.py enrich --gmail niaj@example.com --email contact@example.com
 ### Trip Preparation
 
 ```
-/crm trip to Dubai, Dec 11-13
+/crm trip to Lisbon, Dec 11-13
          ↓
     Search contacts in region (UAE/Middle East)
          ↓
